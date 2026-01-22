@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rômulo Ferreira Monteiro | Hub Digital</title>
+    
+    <!-- Fonte Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
+    <!-- Ícones FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* --- Variáveis de Estilo --- */
+        :root {
+            --bg-color: #0b0f19; /* Fundo base muito escuro */
+            --primary-accent: #3b82f6;
+            --secondary-accent: #14b8a6;
+            
+            /* Glassmorphism Aprimorado */
+            --card-bg: rgba(20, 30, 48, 0.6); 
+            --card-border: rgba(255, 255, 255, 0.1);
+            --card-hover-bg: rgba(30, 41, 59, 0.8);
+            
+            --text-primary: #ffffff;
+            --text-secondary: #94a3b8;
+            
+            --font-main: 'Inter', sans-serif;
+            --border-radius: 16px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            line-height: 1.6;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 40px 20px;
+            overflow-x: hidden; /* Evita scroll horizontal */
+        }
+
+        /* --- Canvas Background (O Segredo do Impacto) --- */
+        #canvas-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1; /* Fica atrás de tudo */
+            background: radial-gradient(circle at center, #1e293b 0%, #0b0f19 100%);
+        }
+
+        /* --- Container --- */
+        .container {
+            width: 100%;
+            max-width: 550px;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* --- Cabeçalho --- */
+        header { margin-bottom: 45px; animation: slideDown 1s ease-out; }
+
+        .profile-wrapper {
+            position: relative;
+            width: 130px;
+            height: 130px;
+            margin: 0 auto 25px auto;
+        }
+
+        /* Efeito de anéis orbitais na foto */
+        .profile-wrapper::before, .profile-wrapper::after {
+            content: '';
+            position: absolute;
+            top: -5px; left: -5px; right: -5px; bottom: -5px;
+            border-radius: 50%;
+            border: 1px solid transparent;
+            border-top-color: var(--primary-accent);
+            border-bottom-color: var(--secondary-accent);
+            animation: spin 6s linear infinite;
+        }
+        .profile-wrapper::after {
+            top: -12px; left: -12px; right: -12px; bottom: -12px;
+            border-left-color: rgba(255,255,255,0.2);
+            border-right-color: rgba(255,255,255,0.2);
+            animation: spinReverse 10s linear infinite;
+        }
+
+        .profile-img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #1e293b;
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.3);
+            position: relative;
+            z-index: 2;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            letter-spacing: -0.03em;
+            /* Texto Gradiente */
+            background: linear-gradient(135deg, #fff 30%, #38bdf8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 10px 20px rgba(0,0,0,0.5);
+        }
+
+        .quote {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            font-weight: 300;
+            background: rgba(0,0,0,0.3);
+            padding: 8px 16px;
+            border-radius: 20px;
+            display: inline-block;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .quote span {
+            color: var(--secondary-accent);
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: block;
+            margin-top: 5px;
+        }
+
+        /* --- Lista de Links --- */
+        .links-list { display: flex; flex-direction: column; gap: 18px; }
+
+        .link-btn {
+            position: relative;
+            display: flex;
+            align-items: center;
+            padding: 18px 24px;
+            
+            /* Vidro Fosco Escuro */
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--card-border);
+            
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            color: var(--text-primary);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow: hidden;
+            
+            /* Animação Entrada */
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        /* Brilho ao passar o mouse */
+        .link-btn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: 0.5s;
+        }
+        
+        .link-btn:hover::before { left: 100%; }
+
+        .link-btn:hover {
+            transform: translateY(-5px) scale(1.02);
+            background: var(--card-hover-bg);
+            border-color: rgba(59, 130, 246, 0.4);
+            box-shadow: 0 10px 40px -10px rgba(59, 130, 246, 0.3);
+        }
+
+        .link-btn i {
+            font-size: 1.4rem;
+            width: 40px;
+            color: var(--primary-accent);
+            transition: 0.3s;
+            text-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
+        }
+
+        .link-btn:hover i { transform: scale(1.2); color: #60a5fa; }
+
+        .link-btn .text {
+            flex-grow: 1;
+            font-weight: 600;
+            font-size: 1.05rem;
+            letter-spacing: 0.01em;
+        }
+
+        .link-btn i.fa-chevron-right {
+            font-size: 0.9rem;
+            color: #475569;
+            width: auto;
+            transform: translateX(0);
+        }
+        .link-btn:hover i.fa-chevron-right {
+            color: #fff;
+            transform: translateX(5px);
+        }
+
+        /* Botão "Em Breve" */
+        .link-btn.coming-soon {
+            background: rgba(255,255,255,0.03);
+            border: 1px dashed rgba(255,255,255,0.2);
+            cursor: default;
+        }
+        .link-btn.coming-soon:hover {
+            transform: none;
+            box-shadow: none;
+            border-color: rgba(255,255,255,0.4);
+        }
+        .link-btn.coming-soon i { color: #64748b; text-shadow: none; }
+
+        .badge {
+            background: linear-gradient(90deg, #f43f5e, #e11d48);
+            font-size: 0.7rem;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: 700;
+            text-transform: uppercase;
+            box-shadow: 0 0 15px rgba(244, 63, 94, 0.4);
+        }
+
+        /* Delays */
+        .link-btn:nth-child(1) { animation-delay: 0.1s; }
+        .link-btn:nth-child(2) { animation-delay: 0.2s; }
+        .link-btn:nth-child(3) { animation-delay: 0.3s; }
+        .link-btn:nth-child(4) { animation-delay: 0.4s; }
+        .link-btn:nth-child(5) { animation-delay: 0.5s; }
+        .link-btn:nth-child(6) { animation-delay: 0.6s; }
+        .link-btn:nth-child(7) { animation-delay: 0.7s; }
+        .link-btn:nth-child(8) { animation-delay: 0.8s; }
+        .link-btn:nth-child(9) { animation-delay: 0.9s; }
+
+        footer { margin-top: 50px; font-size: 0.85rem; color: #475569; }
+
+        /* Keyframes */
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        @keyframes spinReverse { 100% { transform: rotate(-360deg); } }
+        @keyframes slideDown { from { opacity:0; transform:translateY(-40px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes fadeInUp { from { opacity:0; transform:translateY(40px); } to { opacity:1; transform:translateY(0); } }
+
+        @media(max-width: 480px) {
+            h1 { font-size: 1.6rem; }
+            .link-btn { padding: 16px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Canvas para o Fundo Animado -->
+    <canvas id="canvas-bg"></canvas>
+
+    <div class="container">
+        
+        <header>
+            <div class="profile-wrapper">
+                <!-- SUBSTITUA O LINK PELA SUA FOTO -->
+                <img src="https://ui-avatars.com/api/?name=Romulo+Monteiro&background=0f172a&color=fff&size=256&font-size=0.33" alt="Rômulo Monteiro" class="profile-img">
+            </div>
+            
+            <h1>Rômulo Ferreira Monteiro</h1>
+            
+            <div class="quote">
+                "A sorte favorece os audazes"
+                <span>Publio Virgílio</span>
+            </div>
+        </header>
+
+        <div class="links-list">
+            <!-- Botão 1 -->
+            <a href="#" target="_blank" class="link-btn">
+                <i class="fa-solid fa-users"></i>
+                <span class="text">NAF - Junte-se a nós</span>
+                <i class="fa-solid fa-chevron-right"></i>
+            </a>
+
+            <!-- Botão 2 -->
+            <a href="#" target="_blank" class="link-btn">
+                <i class="fa-brands fa-youtube" style="color: #ef4444;"></i>
+                <span class="text">YouTube - Canal Rômulo Monteiro</span>
+                <i class="fa-solid fa-chevron-right"></i>
+            </a>
+
+            <!-- Botão 3 -->
+            <a href="#" target="_blank" class="link-btn">
+                <i class="fa-solid fa-calendar-check" style="color: #14b8a6;"></i>
+                <span class="text">Agende sua consulta</span>
+                <i class="fa-solid fa-chevron-right"></i>
+            </a>
+
+            <!-- Botão 4 -->
+            <a href="#" target="_blank" class="link-btn">
+                <i class="fa-solid fa-carrot" style="color: #f97316;"></i>
+                <span class="text">Para nutris - Dietas grátis</span>
+                <i class="fa-solid fa-chevron-right"></i>
+            </a>
+
+            <!-- Botão 5 -->
+            <a href="#" target="_blank" class="link-btn">
+                <i class="fa-solid fa-chart-line" style="color: #8b5cf6;"></i>
+                <span class="text">Ferramenta - Carbo em dia</span>
+                <i class="fa-solid fa-chevron-right"></i>
+            </a>
+
+            <!-- Botão 6 -->
+            <a href="#" target="_blank" class="link-btn">
+                <i class="fa-solid fa-fire" style="color: #ef4444;"></i>
+                <span class="text">Calcule seu gasto energético</span>
+                <i class="fa-solid fa-chevron-right"></i>
+            </a>
+
+            <!-- Botão 7 -->
+            <a href="#" target="_blank" class="link-btn">
+                <i class="fa-solid fa-ruler-combined" style="color: #ec4899;"></i>
+                <span class="text">Ferramenta - Avaliação corporal</span>
+                <i class="fa-solid fa-chevron-right"></i>
+            </a>
+
+            <!-- Botão 8 -->
+            <a href="#" target="_blank" class="link-btn">
+                <i class="fa-solid fa-laptop-code" style="color: #22d3ee;"></i>
+                <span class="text">Nutri Programador</span>
+                <i class="fa-solid fa-chevron-right"></i>
+            </a>
+
+            <!-- Botão 9 -->
+            <div class="link-btn coming-soon">
+                <i class="fa-solid fa-book-open"></i>
+                <span class="text">Domine a Bibliometria</span>
+                <span class="badge">Em breve</span>
+            </div>
+        </div>
+
+        <footer>
+            <p>&copy; 2024 Rômulo Ferreira Monteiro | Nutri Dev</p>
+        </footer>
+
+    </div>
+
+    <!-- Script para Animação de Fundo (Partículas Conectadas) -->
+    <script>
+        const canvas = document.getElementById('canvas-bg');
+        const ctx = canvas.getContext('2d');
+        let particlesArray;
+
+        // Configuração do tamanho
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            init();
+        });
+
+        // Classe Partícula
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 0.5; // Tamanho variável
+                this.speedX = (Math.random() * 1.5) - 0.75; // Velocidade lenta
+                this.speedY = (Math.random() * 1.5) - 0.75;
+                this.color = Math.random() > 0.5 ? '#3b82f6' : '#14b8a6'; // Cores do tema
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                
+                // Rebater nas bordas
+                if (this.x > canvas.width || this.x < 0) this.speedX = -this.speedX;
+                if (this.y > canvas.height || this.y < 0) this.speedY = -this.speedY;
+            }
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function init() {
+            particlesArray = [];
+            let numberOfParticles = (canvas.height * canvas.width) / 12000; // Densidade
+            for (let i = 0; i < numberOfParticles; i++) {
+                particlesArray.push(new Particle());
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particlesArray.length; i++) {
+                particlesArray[i].update();
+                particlesArray[i].draw();
+                
+                // Conectar partículas próximas
+                for (let j = i; j < particlesArray.length; j++) {
+                    const dx = particlesArray[i].x - particlesArray[j].x;
+                    const dy = particlesArray[i].y - particlesArray[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < 150) { // Distância de conexão
+                        ctx.beginPath();
+                        ctx.strokeStyle = `rgba(100, 116, 139, ${1 - distance/150})`; // Linha desvanece na distância
+                        ctx.lineWidth = 0.5;
+                        ctx.moveTo(particlesArray[i].x, particlesArray[i].y);
+                        ctx.lineTo(particlesArray[j].x, particlesArray[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(animate);
+        }
+
+        init();
+        animate();
+    </script>
+</body>
+</html>
